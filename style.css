@@ -1,0 +1,26 @@
+body {
+    background-image: url(images/gargantua.jpeg);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-color: black;
+}
+
+#player {
+    position: absolute;
+    right: 50px;
+    bottom: 50px;
+}
+
+#enemy {
+    position: absolute;
+    left: 50px;
+    top: 50px;
+}
+
+.enemy-ship {
+    width: 50vw;
+}
+
+.player-ship {
+    width: 25vw;
+}
