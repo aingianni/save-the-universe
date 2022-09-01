@@ -5,10 +5,39 @@ body {
     background-color: black;
 }
 
+.stats {
+    border: solid blue 3px;
+    background-color: azure;
+    width: 20vw;
+    height: 5vh;
+}
+
+#player-vitals {
+    position: absolute;
+    right: 6%;
+    bottom: 57%;
+}
+
 #player {
     position: absolute;
     right: 50px;
     bottom: 50px;
+}
+
+#controls {
+    position: absolute;
+    right: 30%;
+    bottom: 50px;
+    border: solid blue 3px;
+    background-color: azure;
+    width: 20vw;
+    height: 15vh;
+}
+
+#enemy-vitals {
+    position: absolute;
+    top: 30px;
+    left: 30%;
 }
 
 #enemy {
@@ -18,7 +47,7 @@ body {
 }
 
 .enemy-ship {
-    width: 50vw;
+    width: 40vw;
 }
 
 .player-ship {
