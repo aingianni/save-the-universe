@@ -3,8 +3,10 @@ const playerVitals = document.getElementById('player-vitals');
 const playerAttackEffect = document.getElementById('player-attack-effect');
 const enemyAttackEffect = document.getElementById('enemy-attack-effect');
 const enemyVitals = document.getElementById('enemy-vitals');
+const controlPanel = document.getElementById('controls');
 const attackBtn = document.getElementById('attack');
 const repairBtn = document.getElementById('repair');
+const superBtn = document.getElementById('super');
 
 // Global variables.
 let playerTurn = true;
@@ -17,18 +19,24 @@ class PlayerShip {
         this.shield = 100;
     };
     attack() {
-        enemyAttackEffect.innerHTML = '';
-        enemyAttackEffect.style.left = '20%';
-        enemyAttackEffect.style.top = '30%';
-        playerAttackEffect.innerHTML = '<img src="images/red-laser.png">';
-        playerAttackEffect.style.right = '60%';
-        playerAttackEffect.style.bottom = '60%';
+        removeEnemyAttackAnimation();
+        playerAttackAnimation();
         enemy.health -= randomValue(player.damage);
         playerTurn = false;
     };
     repair() {
-        player.shield < 100 ? player.shield += 50 : '';
-        playerTurn = false;
+        if (player.shield !== 0 && player.shield < 100) {
+            removeEnemyAttackAnimation();
+            player.shield += 50;
+            playerTurn = false;
+        } else if (player.shield === 100) {
+            alert("You are full shields!");
+        } else {
+            alert("You're shields are destroyed! They cannot be repaired anymore!");
+        }
+    };
+    super() {
+        // Some code goes here.
     };
 };
 
@@ -38,12 +46,8 @@ class EnemyShip {
         this.damage = 15;
     };
     attack() {
-        playerAttackEffect.innerHTML = '';
-        playerAttackEffect.style.right = '20%';
-        playerAttackEffect.style.bottom = '20%';
-        enemyAttackEffect.innerHTML = '<img src="images/green-laser.png">';
-        enemyAttackEffect.style.left = '60%';
-        enemyAttackEffect.style.top = '50%';
+        removePlayerAttackAnimation();
+        enemyAttackAnimation();
         if (player.shield >= 50) {
             player.shield -= randomValue(enemy.damage * 2);
         } else if (player.shield < 50) {
@@ -63,6 +67,8 @@ const enemy = new EnemyShip();
 const render = () => {
     if (player.shield < 0) {
         player.shield = 0;
+    } else if (player.shield > 100) {
+        player.shield = 100;
     }
 
     if (player.health < 0) {
@@ -77,6 +83,18 @@ const render = () => {
     enemyVitals.innerHTML = `
     Health: ${enemy.health}
     `;
+
+    if (!playerTurn) {
+        controlPanel.style.display = 'none';
+    } else {
+        controlPanel.style.display = 'block';
+    }
+
+    if (player.health === 0) {
+        alert('You have lost!');
+    } else if (enemy.health === 0) {
+        alert('You have won!');
+    };
 };
 
 // Need a function that allows the computer to attack.
@@ -87,7 +105,36 @@ const enemyTurn = () => {
     }
 };
 
+// Computer turn.
 setInterval(enemyTurn, 5000);
+
+// Need a randomizer function to randomize the damage values of attacks.
+const randomValue = (value) => {
+    // 0.8 ----- 1.2
+    return Math.floor(value * ((Math.random() * 0.4) + 0.8));
+}
+
+// Functions for attack animations.
+const playerAttackAnimation = () => {
+    playerAttackEffect.innerHTML = '<img src="images/red-laser.png">';
+    playerAttackEffect.style.right = '60%';
+    playerAttackEffect.style.bottom = '60%';
+}
+const removePlayerAttackAnimation = () => {
+    playerAttackEffect.innerHTML = '';
+    playerAttackEffect.style.right = '20%';
+    playerAttackEffect.style.bottom = '20%';
+}
+const enemyAttackAnimation = () => {
+    enemyAttackEffect.innerHTML = '<img src="images/green-laser.png">';
+    enemyAttackEffect.style.left = '55%';
+    enemyAttackEffect.style.top = '40%';
+}
+const removeEnemyAttackAnimation = () => {
+    enemyAttackEffect.innerHTML = '';
+    enemyAttackEffect.style.left = '20%';
+    enemyAttackEffect.style.top = '30%';
+}
 
 // Event listeners for player buttons.
 attackBtn.addEventListener('click', (evt) => {
@@ -104,8 +151,6 @@ repairBtn.addEventListener('click', (evt) => {
     }
 });
 
-// Need a randomizer function to randomize the damage values of attacks.
-const randomValue = (value) => {
-    // 0.8 ----- 1.2
-    return Math.floor(value * ((Math.random() * 0.4) + 0.8));
-}
+superBtn.addEventListener('click', (evt) => {
+
+});
