@@ -5,6 +5,20 @@ body {
     background-color: black;
 }
 
+#enemy-attack-effect {
+    position: absolute;
+    top: 20%;
+    left: 30%;
+    transition: all 500ms;
+}
+
+#player-attack-effect {
+    position: absolute;
+    bottom: 20%;
+    right: 20%;
+    transition: all 500ms;
+}
+
 .stats {
     border: solid blue 3px;
     background-color: azure;

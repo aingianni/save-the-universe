@@ -1,5 +1,7 @@
 // All of the cached elements variables.
 const playerVitals = document.getElementById('player-vitals');
+const playerAttackEffect = document.getElementById('player-attack-effect');
+const enemyAttackEffect = document.getElementById('enemy-attack-effect');
 const enemyVitals = document.getElementById('enemy-vitals');
 const attackBtn = document.getElementById('attack');
 const repairBtn = document.getElementById('repair');
@@ -15,6 +17,12 @@ class PlayerShip {
         this.shield = 100;
     };
     attack() {
+        enemyAttackEffect.innerHTML = '';
+        enemyAttackEffect.style.left = '20%';
+        enemyAttackEffect.style.top = '30%';
+        playerAttackEffect.innerHTML = '<img src="images/red-laser.png">';
+        playerAttackEffect.style.right = '60%';
+        playerAttackEffect.style.bottom = '60%';
         enemy.health -= randomValue(player.damage);
         playerTurn = false;
     };
@@ -30,11 +38,17 @@ class EnemyShip {
         this.damage = 15;
     };
     attack() {
+        playerAttackEffect.innerHTML = '';
+        playerAttackEffect.style.right = '20%';
+        playerAttackEffect.style.bottom = '20%';
+        enemyAttackEffect.innerHTML = '<img src="images/green-laser.png">';
+        enemyAttackEffect.style.left = '60%';
+        enemyAttackEffect.style.top = '50%';
         if (player.shield >= 50) {
-            player.shield -= enemy.damage * 3;
+            player.shield -= randomValue(enemy.damage * 2);
         } else if (player.shield < 50) {
             player.health -= randomValue(enemy.damage/2);
-            player.shield -= enemy.damage * 3;
+            player.shield -= randomValue(enemy.damage * 2);
         } else {
             player.health -= randomValue(enemy.damage);
         }
