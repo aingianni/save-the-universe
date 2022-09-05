@@ -106,7 +106,7 @@ body {
 }
 
 #modal-template {
-    display: none;
+    display: block;
     background-color: rgba(0, 0, 0, 0.903);
 	position: fixed;
 	top: 0;
@@ -123,13 +123,13 @@ body {
     background-color: var(--primary);
     color: white;
     font-family: 'Michroma', sans-serif;
-	height: 50vh;
-	width: 50vw;
+	height: 60vh;
+	width: 60vw;
 	border-radius: 20px;
 	margin: 150px auto;
 	box-shadow: var(--shadow);
-	padding: 5%;
     text-align: center;
+    overflow: auto;
 }
 
 button {

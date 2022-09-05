@@ -39,10 +39,10 @@ class PlayerShip {
             playerTurn = false;
             render();
         } else if (this.shield === 100) {
-            modalTemp.style.display = 'block';
+            openModel();
             modalBox.innerHTML = "<h1>Shields are at max!</h1><br><h6><em>Click anywhere to close.</em></h6>";
         } else {
-            modalTemp.style.display = 'block';
+            openModel();
             modalBox.innerHTML = "<h1>You're shields are destroyed! They cannot be repaired anymore!</h1><br><h6><em>Click anywhere to close.</em></h6>";
         };
     };
@@ -56,7 +56,7 @@ class PlayerShip {
             playerTurn = false;
             render();
         } else {
-            modalTemp.style.display = 'block';
+            openModel();
             modalBox.innerHTML = "<h1>Super energy too low!</h1> <br> <h2>Need 10 super energy to use!</h2><br><h6><em>Click anywhere to close.</em></h6>";
         };
     };
@@ -88,6 +88,8 @@ const enemy = new EnemyShip();
 
 // Need a render function that will update the page with the stats of each class.
 const render = () => {
+
+    // Logic to make sure stats are right.
     if (player.shield < 0) {
         player.shield = 0;
     } else if (player.shield > 100) {
@@ -106,18 +108,15 @@ const render = () => {
         document.getElementById('super').style.animation = 'pulse 2s infinite';
     }
 
+    // Updates stats on page.
     document.getElementById('health-level').innerHTML = `Health: ${player.health}`;
     document.getElementById('shield-level').innerHTML = `Shields: ${player.shield}`;
     document.getElementById('super').innerText = `Super: ${player.energy}`;
 
-    // playerVitals.innerHTML = `
-    // Health: ${player.health}
-    // Shields: ${player.shield}
-    // Super: ${player.energy}
-    // `;
-
+    // Enemy health bar.
     enemyVitals.style.background = `linear-gradient(90deg, rgba(0,89,255,0.4) 0%, rgba(111,0,255,1) ${(enemy.health/250) * 100}%, rgba(0, 37, 104, 0.736) ${(enemy.health/250) * 100}%`;
 
+    // Check whos turn it is to apply wiggle animation.
     if (!playerTurn) {
         document.querySelector('.player-ship').classList.remove('turn');
         document.querySelector('.enemy-ship').classList.add('turn');
@@ -128,18 +127,20 @@ const render = () => {
         controlPanel.style.visibility = 'visible';
     };
 
+    // Win conditions.
     if (player.health === 0) {
         endGame = true;
         playerShipDiv.innerHTML = '<img src="images/explode.png">'
-        modalTemp.style.display = 'block';
+        openModel();
         modalBox.innerHTML = '<h1>You have lost!<h1><br><h6><em>Click anywhere to reset the game.</em></h6>';
     } else if (enemy.health === 0) {
         endGame = true;
         enemyShipDiv.innerHTML = '<img src="images/explode.png">'
-        modalTemp.style.display = 'block';
+        openModel();
         modalBox.innerHTML = '<h1>You have won!</h1><br><h6><em>Click anywhere to reset the game.</em></h6>';
     };
 
+    // Add event listener to modal, changes based on the endGame boolean.
     modalTemp.addEventListener('click', () => {
         if (!endGame) {
             modalTemp.style.display = 'none';
@@ -149,7 +150,8 @@ const render = () => {
     });
 };
 
-setTimeout(render, 10)
+setTimeout(render, 10);
+// setTimeout(openModel, 1000);
 
 // ==============================
 // ======== Functions ===========
@@ -176,6 +178,11 @@ const reset = () => {
     removePlayerAttackAnimation();
     render();
 };
+
+// Open model function.
+const openModel = () => {
+    modalTemp.style.display = 'block';
+}
 
 // Computer turn.
 setInterval(enemyTurn, 3000);
