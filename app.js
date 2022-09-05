@@ -98,7 +98,7 @@ class EnemyShip {
                 playerShieldDis.style.bottom = '60%';
             }
             user.shield -= shieldValue;
-        } else if (player.shield < 50) {
+        } else if (player.shield < 50 && player.shield > 1) {
             let damageWithShield = randomValue(this.damage/2);
             let shieldValue = randomValue(this.damage * 2);
             playerDamageDis.innerHTML = `${damageWithShield}`;
@@ -111,7 +111,7 @@ class EnemyShip {
             }
             user.health -= damageWithShield;
             user.shield -= shieldValue;
-        } else {
+        } else if (player.shield < 1) {
             let currentDamage = randomValue(this.damage);
             playerDamageDis.innerHTML = `${currentDamage}`;
             playerDamageDis.style.opacity = '0';
