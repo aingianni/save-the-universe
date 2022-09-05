@@ -193,7 +193,6 @@ const render = () => {
 };
 
 setTimeout(render, 10);
-// setTimeout(openModel, 1000);
 
 // ==============================
 // ======== Functions ===========
