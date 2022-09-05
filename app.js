@@ -52,6 +52,7 @@ class PlayerShip {
             playerAttackAnimation();
             comp.health -= randomValue(50);
             this.energy = 0;
+            document.getElementById('super').style.animation = '';
             playerTurn = false;
             render();
         } else {
@@ -101,6 +102,8 @@ const render = () => {
 
     if (player.energy > 10) {
         player.energy = 10;
+    } else if (player.energy === 10) {
+        document.getElementById('super').style.animation = 'pulse 2s infinite';
     }
 
     playerVitals.innerHTML = `
