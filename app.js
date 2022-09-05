@@ -106,11 +106,15 @@ const render = () => {
         document.getElementById('super').style.animation = 'pulse 2s infinite';
     }
 
-    playerVitals.innerHTML = `
-    Health: ${player.health}
-    Shields: ${player.shield} <br>
-    Super: ${player.energy}
-    `;
+    document.getElementById('health-level').innerHTML = `Health: ${player.health}`;
+    document.getElementById('shield-level').innerHTML = `Shields: ${player.shield}`;
+    document.getElementById('super').innerText = `Super: ${player.energy}`;
+
+    // playerVitals.innerHTML = `
+    // Health: ${player.health}
+    // Shields: ${player.shield}
+    // Super: ${player.energy}
+    // `;
 
     enemyVitals.style.background = `linear-gradient(90deg, rgba(0,89,255,0.4) 0%, rgba(111,0,255,1) ${(enemy.health/250) * 100}%, rgba(0, 37, 104, 0.736) ${(enemy.health/250) * 100}%`;
 
