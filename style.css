@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Michroma&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Alfa+Slab+One&display=swap');
 
 :root {
     --primary: rgba(0, 89, 255, 0.4);
@@ -25,6 +26,39 @@ body {
     bottom: 20%;
     right: 20%;
     transition: all 200ms;
+}
+
+#enemy-damage-display {
+    position: absolute;
+    color: yellow;
+    font-size: 32px;
+    font-family: 'Alfa Slab One', sans-serif;
+    z-index: 1;
+    top: 5%;
+    left: 22%;
+    transition: all 800ms;
+}
+
+#player-damage-display {
+    position: absolute;
+    color: yellow;
+    font-size: 32px;
+    font-family: 'Alfa Slab One', sans-serif;
+    z-index: 1;
+    bottom: 55%;
+    right: 10%;
+    transition: all 800ms;
+}
+
+#player-shield-display {
+    position: absolute;
+    color: rgb(0, 242, 255);
+    font-size: 32px;
+    font-family: 'Alfa Slab One', sans-serif;
+    z-index: 1;
+    bottom: 55%;
+    right: 5%;
+    transition: all 800ms;
 }
 
 .stats {
@@ -80,6 +114,7 @@ body {
     flex-direction: column;
     justify-content: space-around;
     box-shadow: var(--shadow);
+    transition: all 500ms;
 }
 
 #enemy-vitals {
@@ -103,6 +138,15 @@ body {
 
 .player-ship {
     width: 25vw;
+}
+
+#shield-overlay {
+    position: absolute;
+    right: 120px;
+    bottom: 10px;
+    z-index: 1;
+    width: 25vw;
+    opacity: 0;
 }
 
 #modal-template {
@@ -173,5 +217,17 @@ button:hover {
     }
     100% {
         box-shadow: 0 0 0 0 rgba(0,247,255, 0);
+    }
+  }
+
+@keyframes shield-fade {
+    0% {
+        opacity: 0;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
     }
   }

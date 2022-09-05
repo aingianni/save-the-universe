@@ -11,6 +11,9 @@ const modalTemp = document.getElementById('modal-template');
 const modalBox = document.getElementById('modal-box');
 const playerShipDiv = document.getElementById('player');
 const enemyShipDiv = document.getElementById('enemy');
+const enemyDamageDis = document.getElementById('enemy-damage-display');
+const playerShieldDis = document.getElementById('player-shield-display');
+const playerDamageDis = document.getElementById('player-damage-display');
 
 // Global variables.
 let playerTurn = true;
@@ -18,16 +21,22 @@ let endGame = false;
 
 // I need to create two class's. One for the player ship and one for the enemy ship.
 class PlayerShip {
-    constructor() {
-        this.health = 100;
-        this.damage = 12;
+    constructor(health, damage) {
+        this.health = health;
+        this.damage = damage;
         this.shield = 100;
         this.energy = 0;
     };
     attack(comp) {
         removeEnemyAttackAnimation();
         playerAttackAnimation();
-        comp.health -= randomValue(this.damage);
+        removeDamageNumberEnemy();
+        removeShieldNumberPlayer();
+        let currentDamage = randomValue(this.damage);
+        enemyDamageDis.innerHTML = `${currentDamage}`;
+        enemyDamageDis.style.opacity = '0';
+        enemyDamageDis.style.top = '0';
+        comp.health -= currentDamage;
         this.energy += 1;
         playerTurn = false;
         render();
@@ -35,6 +44,9 @@ class PlayerShip {
     repair() {
         if (this.shield !== 0 && this.shield < 100) {
             removeEnemyAttackAnimation();
+            removeDamageNumberEnemy();
+            removeShieldNumberPlayer();
+            document.getElementById('shield-overlay').style.animation = 'shield-fade 1s 1';
             this.shield += 50;
             playerTurn = false;
             render();
@@ -43,48 +55,76 @@ class PlayerShip {
             modalBox.innerHTML = "<h1>Shields are at max!</h1><br><h6><em>Click anywhere to close.</em></h6>";
         } else {
             openModel();
-            modalBox.innerHTML = "<h1>You're shields are destroyed! They cannot be repaired anymore!</h1><br><h6><em>Click anywhere to close.</em></h6>";
+            modalBox.innerHTML = "<h1>You're shields are destroyed!</h1><br><h6><em>Click anywhere to close.</em></h6>";
         };
     };
     super(comp) {
         if (this.energy === 10) {
             removeEnemyAttackAnimation();
             playerAttackAnimation();
-            comp.health -= randomValue(50);
+            removeDamageNumberEnemy();
+            removeShieldNumberPlayer();
+            let currentDamage = randomValue(50);
+            enemyDamageDis.innerHTML = `${currentDamage}`;
+            enemyDamageDis.style.opacity = '0';
+            enemyDamageDis.style.top = '0';
+            comp.health -= currentDamage;
             this.energy = 0;
             document.getElementById('super').style.animation = '';
             playerTurn = false;
             render();
         } else {
             openModel();
-            modalBox.innerHTML = "<h1>Super energy too low!</h1> <br> <h2>Need 10 super energy to use!</h2><br><h6><em>Click anywhere to close.</em></h6>";
+            modalBox.innerHTML = "<h1>Super energy too low!</h1><br><h3>Need 10 super energy to use!</h3><br><h6><em>Click anywhere to close.</em></h6>";
         };
     };
 };
 
 class EnemyShip {
-    constructor() {
-        this.health = 250;
-        this.damage = 15;
+    constructor(health, damage) {
+        this.health = health;
+        this.damage = damage;
     };
     attack(user) {
         removePlayerAttackAnimation();
         enemyAttackAnimation();
+        removeDamageNumberPlayer();
+        document.getElementById('shield-overlay').style.animation = '';
         if (user.shield >= 50) {
-            user.shield -= randomValue(this.damage * 2);
+            let shieldValue = randomValue(this.damage * 2);
+            if (player.shield > 0) {
+                playerShieldDis.innerHTML = `${shieldValue}`;
+                playerShieldDis.style.opacity = '0';
+                playerShieldDis.style.bottom = '60%';
+            }
+            user.shield -= shieldValue;
         } else if (player.shield < 50) {
-            user.health -= randomValue(this.damage/2);
-            user.shield -= randomValue(this.damage * 2);
+            let damageWithShield = randomValue(this.damage/2);
+            let shieldValue = randomValue(this.damage * 2);
+            playerDamageDis.innerHTML = `${damageWithShield}`;
+            playerDamageDis.style.opacity = '0';
+            playerDamageDis.style.bottom = '60%';
+            if (player.shield > 0) {
+                playerShieldDis.innerHTML = `${shieldValue}`;
+                playerShieldDis.style.opacity = '0';
+                playerShieldDis.style.bottom = '60%';
+            }
+            user.health -= damageWithShield;
+            user.shield -= shieldValue;
         } else {
-            user.health -= randomValue(this.damage);
+            let currentDamage = randomValue(this.damage);
+            playerDamageDis.innerHTML = `${currentDamage}`;
+            playerDamageDis.style.opacity = '0';
+            playerDamageDis.style.bottom = '60%';
+            user.health -= currentDamage;
         };
         playerTurn = true;
         render();
     };
 };
 
-const player = new PlayerShip();
-const enemy = new EnemyShip();
+const player = new PlayerShip(100, 12);
+const enemy = new EnemyShip(250, 15);
 
 // Need a render function that will update the page with the stats of each class.
 const render = () => {
@@ -121,10 +161,12 @@ const render = () => {
         document.querySelector('.player-ship').classList.remove('turn');
         document.querySelector('.enemy-ship').classList.add('turn');
         controlPanel.style.visibility = 'hidden';
+        controlPanel.style.opacity = '0';
     } else {
         document.querySelector('.enemy-ship').classList.remove('turn');
         document.querySelector('.player-ship').classList.add('turn');
         controlPanel.style.visibility = 'visible';
+        controlPanel.style.opacity = '1';
     };
 
     // Win conditions.
@@ -218,6 +260,23 @@ const removeEnemyAttackAnimation = () => {
     enemyAttackEffect.style.top = '30%';
     enemyAttackEffect.style.opacity = '1';
 };
+
+// Functions for damage numbers.
+const removeDamageNumberPlayer = () => {
+    enemyDamageDis.innerHTML = '';
+    enemyDamageDis.style.opacity = '1';
+    enemyDamageDis.style.top = '5%';
+}
+const removeDamageNumberEnemy = () => {
+    playerDamageDis.innerHTML = ``;
+    playerDamageDis.style.opacity = '1';
+    playerDamageDis.style.bottom = '55%';
+}
+const removeShieldNumberPlayer = () => {
+    playerShieldDis.innerHTML = ``;
+    playerShieldDis.style.opacity = '1';
+    playerShieldDis.style.bottom = '55%';
+}
 
 // ==============================
 // ===== Event Listeners ========
