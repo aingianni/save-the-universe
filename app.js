@@ -7,36 +7,55 @@ const controlPanel = document.getElementById('controls');
 const attackBtn = document.getElementById('attack');
 const repairBtn = document.getElementById('repair');
 const superBtn = document.getElementById('super');
+const modalTemp = document.getElementById('modal-template');
+const modalBox = document.getElementById('modal-box');
 
 // Global variables.
 let playerTurn = true;
+let endGame = false;
 
 // I need to create two class's. One for the player ship and one for the enemy ship.
 class PlayerShip {
     constructor() {
         this.health = 100;
-        this.damage = 10;
+        this.damage = 12;
         this.shield = 100;
+        this.energy = 0;
     };
-    attack() {
+    attack(comp) {
         removeEnemyAttackAnimation();
         playerAttackAnimation();
-        enemy.health -= randomValue(player.damage);
+        comp.health -= randomValue(this.damage);
+        this.energy += 1;
         playerTurn = false;
+        render();
     };
     repair() {
-        if (player.shield !== 0 && player.shield < 100) {
+        if (this.shield !== 0 && this.shield < 100) {
             removeEnemyAttackAnimation();
-            player.shield += 50;
+            this.shield += 50;
             playerTurn = false;
-        } else if (player.shield === 100) {
-            alert("You are full shields!");
+            render();
+        } else if (this.shield === 100) {
+            modalTemp.style.display = 'block';
+            modalBox.innerHTML = "You are full shields!";
         } else {
-            alert("You're shields are destroyed! They cannot be repaired anymore!");
-        }
+            modalTemp.style.display = 'block';
+            modalBox.innerHTML = "You're shields are destroyed! They cannot be repaired anymore!";
+        };
     };
-    super() {
-        // Some code goes here.
+    super(comp) {
+        if (this.energy === 10) {
+            removeEnemyAttackAnimation();
+            playerAttackAnimation();
+            comp.health -= randomValue(50);
+            this.energy = 0;
+            playerTurn = false;
+            render();
+        } else {
+            modalTemp.style.display = 'block';
+            modalBox.innerHTML = 'You dont have enough power!';
+        };
     };
 };
 
@@ -45,18 +64,19 @@ class EnemyShip {
         this.health = 250;
         this.damage = 15;
     };
-    attack() {
+    attack(user) {
         removePlayerAttackAnimation();
         enemyAttackAnimation();
-        if (player.shield >= 50) {
-            player.shield -= randomValue(enemy.damage * 2);
+        if (user.shield >= 50) {
+            user.shield -= randomValue(this.damage * 2);
         } else if (player.shield < 50) {
-            player.health -= randomValue(enemy.damage/2);
-            player.shield -= randomValue(enemy.damage * 2);
+            user.health -= randomValue(this.damage/2);
+            user.shield -= randomValue(this.damage * 2);
         } else {
-            player.health -= randomValue(enemy.damage);
-        }
+            user.health -= randomValue(this.damage);
+        };
         playerTurn = true;
+        render();
     };
 };
 
@@ -69,15 +89,22 @@ const render = () => {
         player.shield = 0;
     } else if (player.shield > 100) {
         player.shield = 100;
-    }
+    };
 
     if (player.health < 0) {
         player.health = 0;
+    } else if (enemy.health < 0) {
+        enemy.health = 0;
+    }
+
+    if (player.energy > 10) {
+        player.energy = 10;
     }
 
     playerVitals.innerHTML = `
     Health: ${player.health}
     Shields: ${player.shield}
+    Super: ${player.energy}
     `;
 
     enemyVitals.innerHTML = `
@@ -88,31 +115,59 @@ const render = () => {
         controlPanel.style.display = 'none';
     } else {
         controlPanel.style.display = 'block';
-    }
+    };
 
     if (player.health === 0) {
-        alert('You have lost!');
+        endGame = true;
+        modalTemp.style.display = 'block';
+        modalBox.innerHTML = 'You have lost!';
     } else if (enemy.health === 0) {
-        alert('You have won!');
+        endGame = true;
+        modalTemp.style.display = 'block';
+        modalBox.innerHTML = 'You have won!';
     };
+
+    modalBox.addEventListener('click', () => {
+        if (!endGame) {
+            modalTemp.style.display = 'none';
+        } else {
+            reset();
+        }
+    });
 };
+
+// ==============================
+// ======== Functions ===========
+// ==============================
 
 // Need a function that allows the computer to attack.
 const enemyTurn = () => {
     if (!playerTurn) {
-        enemy.attack();
-        render();
+        enemy.attack(player);
     }
 };
 
+// Reset the game.
+const reset = () => {
+    player.health = 100;
+    player.shield = 100;
+    player.energy = 0;
+    enemy.health = 250;
+    endGame = false;
+    playerTurn = true;
+    removeEnemyAttackAnimation();
+    removePlayerAttackAnimation();
+    render();
+};
+
 // Computer turn.
-setInterval(enemyTurn, 5000);
+setInterval(enemyTurn, 3000);
 
 // Need a randomizer function to randomize the damage values of attacks.
 const randomValue = (value) => {
     // 0.8 ----- 1.2
     return Math.floor(value * ((Math.random() * 0.4) + 0.8));
-}
+};
 
 // Functions for attack animations.
 const playerAttackAnimation = () => {
@@ -127,30 +182,37 @@ const removePlayerAttackAnimation = () => {
 }
 const enemyAttackAnimation = () => {
     enemyAttackEffect.innerHTML = '<img src="images/green-laser.png">';
-    enemyAttackEffect.style.left = '55%';
+    enemyAttackEffect.style.left = '65%';
     enemyAttackEffect.style.top = '40%';
 }
 const removeEnemyAttackAnimation = () => {
     enemyAttackEffect.innerHTML = '';
     enemyAttackEffect.style.left = '20%';
     enemyAttackEffect.style.top = '30%';
-}
+};
+
+// ==============================
+// ===== Event Listeners ========
+// ==============================
 
 // Event listeners for player buttons.
 attackBtn.addEventListener('click', (evt) => {
     if (playerTurn) {
-        player.attack();
-        render();
+        player.attack(enemy);
     }
+    render();
 });
 
 repairBtn.addEventListener('click', (evt) => {
     if (playerTurn) {
         player.repair();
-        render();
     }
+    render();
 });
 
 superBtn.addEventListener('click', (evt) => {
-
+    if (playerTurn) {
+        player.super(enemy);
+    };
+    render();
 });
