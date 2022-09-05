@@ -11,14 +11,14 @@ body {
     position: absolute;
     top: 20%;
     left: 30%;
-    transition: all 100ms;
+    transition: all 200ms;
 }
 
 #player-attack-effect {
     position: absolute;
     bottom: 20%;
     right: 20%;
-    transition: all 100ms;
+    transition: all 200ms;
 }
 
 .stats {
@@ -107,7 +107,6 @@ body {
 	margin: 150px auto;
 	box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
 	padding: 5%;
-	line-height: 120%;
     text-align: center;
 }
 
@@ -135,4 +134,4 @@ button:hover {
     0% { transform: translate(-5px, 0px); }
     40% { transform: translate(5px, 0px); }
     100% { transform: translate(-5px, 0px); }
-  }
+}

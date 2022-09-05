@@ -38,10 +38,10 @@ class PlayerShip {
             render();
         } else if (this.shield === 100) {
             modalTemp.style.display = 'block';
-            modalBox.innerHTML = "<h1>Shields are at max!</h1><br><h6><em>Click to close.</em></h6>";
+            modalBox.innerHTML = "<h1>Shields are at max!</h1><br><h6><em>Click anywhere to close.</em></h6>";
         } else {
             modalTemp.style.display = 'block';
-            modalBox.innerHTML = "<h1>You're shields are destroyed! They cannot be repaired anymore!</h1><br><h6><em>Click to close.</em></h6>";
+            modalBox.innerHTML = "<h1>You're shields are destroyed! They cannot be repaired anymore!</h1><br><h6><em>Click anywhere to close.</em></h6>";
         };
     };
     super(comp) {
@@ -54,7 +54,7 @@ class PlayerShip {
             render();
         } else {
             modalTemp.style.display = 'block';
-            modalBox.innerHTML = "<h1>Super energy too low!</h1><br><h6><em>Click to close.</em></h6>";
+            modalBox.innerHTML = "<h1>Super energy too low!</h1><br><h6><em>Click anywhere to close.</em></h6>";
         };
     };
 };
@@ -124,14 +124,14 @@ const render = () => {
     if (player.health === 0) {
         endGame = true;
         modalTemp.style.display = 'block';
-        modalBox.innerHTML = '<h1>You have lost!<h1><br><h6><em>Click to reset the game.</em></h6>';
+        modalBox.innerHTML = '<h1>You have lost!<h1><br><h6><em>Click anywhere to reset the game.</em></h6>';
     } else if (enemy.health === 0) {
         endGame = true;
         modalTemp.style.display = 'block';
-        modalBox.innerHTML = '<h1>You have won!</h1><br><h6><em>Click to reset the game.</em></h6>';
+        modalBox.innerHTML = '<h1>You have won!</h1><br><h6><em>Click anywhere to reset the game.</em></h6>';
     };
 
-    modalBox.addEventListener('click', () => {
+    modalTemp.addEventListener('click', () => {
         if (!endGame) {
             modalTemp.style.display = 'none';
         } else {
@@ -180,21 +180,25 @@ const playerAttackAnimation = () => {
     playerAttackEffect.innerHTML = '<img src="images/red-laser.png">';
     playerAttackEffect.style.right = '60%';
     playerAttackEffect.style.bottom = '60%';
+    playerAttackEffect.style.opacity = '0';
 }
 const removePlayerAttackAnimation = () => {
     playerAttackEffect.innerHTML = '';
     playerAttackEffect.style.right = '20%';
     playerAttackEffect.style.bottom = '20%';
+    playerAttackEffect.style.opacity = '1';
 }
 const enemyAttackAnimation = () => {
     enemyAttackEffect.innerHTML = '<img src="images/green-laser.png">';
     enemyAttackEffect.style.left = '65%';
     enemyAttackEffect.style.top = '40%';
+    enemyAttackEffect.style.opacity = '0';
 }
 const removeEnemyAttackAnimation = () => {
     enemyAttackEffect.innerHTML = '';
     enemyAttackEffect.style.left = '20%';
     enemyAttackEffect.style.top = '30%';
+    enemyAttackEffect.style.opacity = '1';
 };
 
 // ==============================
