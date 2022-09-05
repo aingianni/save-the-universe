@@ -1,5 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Michroma&display=swap');
 
+:root {
+    --primary: rgba(0, 89, 255, 0.4);
+    --shadow: rgba(255, 255, 255, 0.1) 0px 4px 12px;
+}
+
 body {
     background-image: url(images/gargantua.jpeg);
     background-repeat: no-repeat;
@@ -23,7 +28,7 @@ body {
 
 .stats {
     border-radius: 10px;;
-    background-color: rgba(0, 89, 255, 0.4);
+    background-color: var(--primary);
     font-family: 'Michroma', sans-serif;
     padding: 5px;
     margin: 5px;
@@ -33,6 +38,7 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: space-around;
+    box-shadow: var(--shadow);
 }
 
 #player-vitals {
@@ -52,7 +58,7 @@ body {
     right: 30%;
     bottom: 50px;
     border-radius: 10px;;
-    background-color: rgba(0, 89, 255, 0.4);
+    background-color: var(--primary);
     font-family: 'Michroma', sans-serif;
     color: white;
     padding: 5px;
@@ -63,12 +69,16 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: space-around;
+    box-shadow: var(--shadow);
 }
 
 #enemy-vitals {
     position: absolute;
     top: 30px;
     left: 30%;
+    height: 10px;
+    border: solid rgba(168, 168, 168, 0.76) 1px;
+    background: linear-gradient(90deg, rgba(0,89,255,0.4) 0%, rgba(111,0,255,1) 100%, rgba(0, 37, 104, 0.736) 100%);
 }
 
 #enemy {
@@ -87,10 +97,11 @@ body {
 
 #modal-template {
     display: none;
-    background-color: rgba(0, 0, 0, 0.4);
+    background-color: rgba(0, 0, 0, 0.903);
 	position: fixed;
 	top: 0;
 	left: 0;
+    margin: auto;
 	height: 100%;
 	width: 100%;
 	z-index: 1;
@@ -99,13 +110,14 @@ body {
 
 #modal-box {
     font-size: 24px;
-    background-color: rgb(248, 248, 248);
+    background-color: var(--primary);
+    color: white;
     font-family: 'Michroma', sans-serif;
 	height: 50vh;
 	width: 50vw;
 	border-radius: 20px;
 	margin: 150px auto;
-	box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+	box-shadow: var(--shadow);
 	padding: 5%;
     text-align: center;
 }

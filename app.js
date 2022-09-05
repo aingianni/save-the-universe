@@ -9,6 +9,8 @@ const repairBtn = document.getElementById('repair');
 const superBtn = document.getElementById('super');
 const modalTemp = document.getElementById('modal-template');
 const modalBox = document.getElementById('modal-box');
+const playerShipDiv = document.getElementById('player');
+const enemyShipDiv = document.getElementById('enemy');
 
 // Global variables.
 let playerTurn = true;
@@ -54,7 +56,7 @@ class PlayerShip {
             render();
         } else {
             modalTemp.style.display = 'block';
-            modalBox.innerHTML = "<h1>Super energy too low!</h1><br><h6><em>Click anywhere to close.</em></h6>";
+            modalBox.innerHTML = "<h1>Super energy too low!</h1> <br> <h2>Need 10 super energy to use!</h2><br><h6><em>Click anywhere to close.</em></h6>";
         };
     };
 };
@@ -107,9 +109,7 @@ const render = () => {
     Super: ${player.energy}
     `;
 
-    enemyVitals.innerHTML = `
-    Health: ${enemy.health}
-    `;
+    enemyVitals.style.background = `linear-gradient(90deg, rgba(0,89,255,0.4) 0%, rgba(111,0,255,1) ${(enemy.health/250) * 100}%, rgba(0, 37, 104, 0.736) ${(enemy.health/250) * 100}%`;
 
     if (!playerTurn) {
         document.querySelector('.player-ship').classList.remove('turn');
@@ -123,10 +123,12 @@ const render = () => {
 
     if (player.health === 0) {
         endGame = true;
+        playerShipDiv.innerHTML = '<img src="images/explode.png">'
         modalTemp.style.display = 'block';
         modalBox.innerHTML = '<h1>You have lost!<h1><br><h6><em>Click anywhere to reset the game.</em></h6>';
     } else if (enemy.health === 0) {
         endGame = true;
+        enemyShipDiv.innerHTML = '<img src="images/explode.png">'
         modalTemp.style.display = 'block';
         modalBox.innerHTML = '<h1>You have won!</h1><br><h6><em>Click anywhere to reset the game.</em></h6>';
     };
@@ -161,6 +163,8 @@ const reset = () => {
     enemy.health = 250;
     endGame = false;
     playerTurn = true;
+    playerShipDiv.innerHTML = `<img class="player-ship" src="images/player-ship-one.png" alt="This is the player's ship.">`;
+    enemyShipDiv.innerHTML = `<img class="enemy-ship" src="images/alien-two.png" alt="This is the enemy's ship.">`;
     removeEnemyAttackAnimation();
     removePlayerAttackAnimation();
     render();
