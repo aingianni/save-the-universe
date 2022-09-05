@@ -38,10 +38,10 @@ class PlayerShip {
             render();
         } else if (this.shield === 100) {
             modalTemp.style.display = 'block';
-            modalBox.innerHTML = "You are full shields!";
+            modalBox.innerHTML = "<h1>Shields are at max!</h1><br><h6><em>Click to close.</em></h6>";
         } else {
             modalTemp.style.display = 'block';
-            modalBox.innerHTML = "You're shields are destroyed! They cannot be repaired anymore!";
+            modalBox.innerHTML = "<h1>You're shields are destroyed! They cannot be repaired anymore!</h1><br><h6><em>Click to close.</em></h6>";
         };
     };
     super(comp) {
@@ -54,7 +54,7 @@ class PlayerShip {
             render();
         } else {
             modalTemp.style.display = 'block';
-            modalBox.innerHTML = 'You dont have enough power!';
+            modalBox.innerHTML = "<h1>Super energy too low!</h1><br><h6><em>Click to close.</em></h6>";
         };
     };
 };
@@ -103,7 +103,7 @@ const render = () => {
 
     playerVitals.innerHTML = `
     Health: ${player.health}
-    Shields: ${player.shield}
+    Shields: ${player.shield} <br>
     Super: ${player.energy}
     `;
 
@@ -112,19 +112,23 @@ const render = () => {
     `;
 
     if (!playerTurn) {
-        controlPanel.style.display = 'none';
+        document.querySelector('.player-ship').classList.remove('turn');
+        document.querySelector('.enemy-ship').classList.add('turn');
+        controlPanel.style.visibility = 'hidden';
     } else {
-        controlPanel.style.display = 'block';
+        document.querySelector('.enemy-ship').classList.remove('turn');
+        document.querySelector('.player-ship').classList.add('turn');
+        controlPanel.style.visibility = 'visible';
     };
 
     if (player.health === 0) {
         endGame = true;
         modalTemp.style.display = 'block';
-        modalBox.innerHTML = 'You have lost!';
+        modalBox.innerHTML = '<h1>You have lost!<h1><br><h6><em>Click to reset the game.</em></h6>';
     } else if (enemy.health === 0) {
         endGame = true;
         modalTemp.style.display = 'block';
-        modalBox.innerHTML = 'You have won!';
+        modalBox.innerHTML = '<h1>You have won!</h1><br><h6><em>Click to reset the game.</em></h6>';
     };
 
     modalBox.addEventListener('click', () => {
@@ -135,6 +139,8 @@ const render = () => {
         }
     });
 };
+
+setTimeout(render, 10)
 
 // ==============================
 // ======== Functions ===========
