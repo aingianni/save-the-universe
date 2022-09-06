@@ -123,8 +123,10 @@ class EnemyShip {
     };
 };
 
+let currentEnemy = 0;
 const player = new PlayerShip(100, 12);
-const enemy = new EnemyShip(250, 15);
+const enemyFleet = [new EnemyShip(250, 15), new EnemyShip(350, 25), new EnemyShip(450, 35), new EnemyShip(550, 45), new EnemyShip(700, 55)];
+let enemy = enemyFleet[currentEnemy];
 
 // Need a render function that will update the page with the stats of each class.
 const render = () => {
@@ -158,13 +160,13 @@ const render = () => {
 
     // Check whos turn it is to apply wiggle animation.
     if (!playerTurn) {
-        document.querySelector('.player-ship').classList.remove('turn');
-        document.querySelector('.enemy-ship').classList.add('turn');
+        document.getElementById('player').classList.remove('turn');
+        document.getElementById('enemy').classList.add('turn');
         controlPanel.style.visibility = 'hidden';
         controlPanel.style.opacity = '0';
     } else {
-        document.querySelector('.enemy-ship').classList.remove('turn');
-        document.querySelector('.player-ship').classList.add('turn');
+        document.getElementById('enemy').classList.remove('turn');
+        document.getElementById('player').classList.add('turn');
         controlPanel.style.visibility = 'visible';
         controlPanel.style.opacity = '1';
     };
