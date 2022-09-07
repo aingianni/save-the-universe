@@ -14,6 +14,10 @@ body {
     background-color: black;
 }
 
+li {
+    list-style: none;
+}
+
 #enemy-attack-effect {
     position: absolute;
     top: 20%;
@@ -96,6 +100,7 @@ body {
     position: absolute;
     right: 50px;
     bottom: 50px;
+    transition: all 500ms;
 }
 
 #controls {
@@ -123,6 +128,7 @@ body {
     top: 30px;
     left: 30%;
     height: 10px;
+    color: rgba(255, 255, 255, 0.654);
     border: solid rgba(168, 168, 168, 0.76) 1px;
     background: linear-gradient(90deg, rgba(0,89,255,0.4) 0%, rgba(111,0,255,1) 100%, rgba(0, 37, 104, 0.736) 100%);
 }
@@ -131,6 +137,7 @@ body {
     position: absolute;
     left: 50px;
     top: 50px;
+    transition: all 500ms;
 }
 
 .enemy-ship {

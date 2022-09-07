@@ -21,6 +21,7 @@ let endGame = false;
 let playerStatus = true;
 let superDamage = 50;
 let currentAlienInd = 0;
+let resetCounter = 0;
 let alienImages = ['images/alien-one.png', 'images/alien-two.png', 'images/alien-three.png', 'images/alien-four.png', 'images/alien-five.png']
 
 // I need to create two class's. One for the player ship and one for the enemy ship.
@@ -48,15 +49,15 @@ class PlayerShip {
         render();
     };
     repair() {
-        if (this.shield !== 0 && this.shield < 100) {
+        if (this.shield !== 0 && this.shield < this.maxShield) {
             removeEnemyAttackAnimation();
             removeDamageNumberEnemy();
             removeShieldNumberPlayer();
             document.getElementById('shield-overlay').style.animation = 'shield-fade 1s 1';
-            this.shield += 50;
+            this.shield += (this.maxShield / 2);
             playerTurn = false;
             render();
-        } else if (this.shield === 100) {
+        } else if (this.shield === this.maxShield) {
             openModel();
             modalBox.innerHTML = "<h1>Shields are at max!</h1><br><h6><em>Click anywhere to close.</em></h6>";
         } else {
@@ -87,7 +88,8 @@ class PlayerShip {
 };
 
 class EnemyShip {
-    constructor(health, maxHealth, damage) {
+    constructor(name, health, maxHealth, damage) {
+        this.name = name;
         this.health = health;
         this.maxHealth = maxHealth;
         this.damage = damage;
@@ -97,7 +99,7 @@ class EnemyShip {
         enemyAttackAnimation();
         removeDamageNumberPlayer();
         document.getElementById('shield-overlay').style.animation = '';
-        if (user.shield >= 50) {
+        if (user.shield >= (user.maxShield / 2)) {
             let shieldValue = randomValue(this.damage * 2);
             if (player.shield > 0) {
                 playerShieldDis.innerHTML = `${shieldValue}`;
@@ -105,7 +107,7 @@ class EnemyShip {
                 playerShieldDis.style.bottom = '60%';
             }
             user.shield -= shieldValue;
-        } else if (player.shield < 50 && player.shield > 1) {
+        } else if (player.shield < (user.maxShield / 2) && player.shield >= 1) {
             let damageWithShield = randomValue(this.damage/2);
             let shieldValue = randomValue(this.damage * 2);
             playerDamageDis.innerHTML = `${damageWithShield}`;
@@ -132,7 +134,7 @@ class EnemyShip {
 
 let currentEnemy = 0;
 const player = new PlayerShip(100, 100, 100, 12);
-let enemyFleet = [new EnemyShip(250, 250, 15), new EnemyShip(350, 350, 25), new EnemyShip(450, 450, 35), new EnemyShip(550, 550, 45), new EnemyShip(700, 700, 55)];
+let enemyFleet = [new EnemyShip('Screon the Destroyer', 150, 150, 15), new EnemyShip('Kratheon the Conquerer', 250, 250, 25), new EnemyShip('Blaiid the Raveger', 450, 450, 30), new EnemyShip('Rolait the Defiler', 750, 750, 40), new EnemyShip('Godrey the Lord', 1200, 1200, 55)];
 let enemy = enemyFleet[currentEnemy];
 
 // Need a render function that will update the page with the stats of each class.
@@ -166,6 +168,7 @@ const render = () => {
 
     // Enemy health bar.
     enemyVitals.style.background = `linear-gradient(90deg, rgba(0,89,255,0.4) 0%, rgba(111,0,255,1) ${(enemy.health/enemy.maxHealth) * 100}%, rgba(0, 37, 104, 0.736) ${(enemy.health/enemy.maxHealth) * 100}%`;
+    enemyVitals.innerText = `${enemy.name}`
 
     // Check whos turn it is to apply wiggle animation.
     if (!playerTurn) {
@@ -185,29 +188,38 @@ const render = () => {
         endGame = true;
         playerStatus = false;
         playerShipDiv.innerHTML = '<img src="images/explode.png">'
-        openModel();
+        setTimeout(openModel, 1000);
         modalBox.innerHTML = '<h1>You have lost!<h1><br><h6><em>Click anywhere to reset the game.</em></h6>';
     } else if (enemy.health === 0 && currentEnemy === enemyFleet.length-1) {
         playerTurn = true;
         endGame = true;
         playerStatus = false;
         enemyShipDiv.innerHTML = '<img src="images/explode.png">'
-        openModel();
+        setTimeout(openModel, 1000);
         modalBox.innerHTML = `
         <h1>You have won!</h1>
         <br>
         <h2>You have successfully destroyed the enemy fleet!</h2>
+        <br>
         <h6><em>Click anywhere to reset the game.</em></h6>
         `;
     } else if (enemy.health === 0) {
         playerTurn = true;
         endGame = true;
         enemyShipDiv.innerHTML = '<img src="images/explode.png">'
-        openModel();
+        setTimeout(openModel, 1000);
         modalBox.innerHTML = `
         <h1>You have won!</h1>
         <br>
-        <h6><em>Try your luck against the next boss?</em><button id="continue">Continue</button></h6>
+        <h5><em>Try your luck against the next boss?</em></h5>
+        <ul>
+            <li>Health increase: 25 <em>percent</em></li>
+            <li>Shield increase: 20 <em>percent</em></li>
+            <li>Damage increase: 10 <em>percent</em></li>
+            <li>Super increase: 20 <em>damage</em></li>
+        </ul>
+        <br>
+        <button id="continue">Continue</button>
         `;
         document.getElementById('continue').addEventListener('click', (evt) => {
             currentEnemy++;
@@ -222,7 +234,7 @@ const render = () => {
             modalTemp.style.display = 'none';
         } else if (endGame && !playerStatus) {
             currentEnemy = 0;
-            enemy = enemyFleet[currentEnemy];
+            // enemy = enemyFleet[currentEnemy];
             currentAlienInd = 0;
             reset();
         }
@@ -248,8 +260,10 @@ const reset = () => {
     player.maxHealth = 100;
     player.shield = 100;
     player.maxHealth = 100;
+    player.damage = 12;
     player.energy = 0;
-    enemyFleet = [new EnemyShip(250, 250, 15), new EnemyShip(350, 350, 25), new EnemyShip(450, 450, 35), new EnemyShip(550, 550, 45), new EnemyShip(700, 700, 55)];
+    enemyFleet = [new EnemyShip('Screon the Destroyer', 150, 150, 15), new EnemyShip('Kratheon the Conquerer', 250, 250, 25), new EnemyShip('Blaiid the Raveger', 450, 450, 30), new EnemyShip('Rolait the Defiler', 750, 750, 40), new EnemyShip('Godrey the Lord', 1200, 1200, 55)];
+    enemy = enemyFleet[currentEnemy];
     endGame = false;
     playerTurn = true;
     playerShipDiv.innerHTML = `<img class="player-ship" src="images/player-ship-one.png" alt="This is the player's ship.">`;
@@ -260,11 +274,11 @@ const reset = () => {
 };
 
 const continueGame = () => {
-    player.maxHealth = (player.maxHealth + (player.maxHealth * .20));
+    player.maxHealth = Math.floor((player.maxHealth + (player.maxHealth * .25)));
     player.health = player.maxHealth;
-    player.maxShield = (player.maxShield + (player.maxShield * .20));
+    player.maxShield = Math.floor((player.maxShield + (player.maxShield * .20)));
     player.shield = player.maxShield;
-    player.damage += (player.damage + (player.damage * .10));
+    player.damage += Math.floor((player.damage + (player.damage * .10)));
     player.energy = 0;
     superDamage += 20;
     endGame = false;
