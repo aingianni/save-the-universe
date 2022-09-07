@@ -18,12 +18,18 @@ const playerDamageDis = document.getElementById('player-damage-display');
 // Global variables.
 let playerTurn = true;
 let endGame = false;
+let playerStatus = true;
+let superDamage = 50;
+let currentAlienInd = 0;
+let alienImages = ['images/alien-one.png', 'images/alien-two.png', 'images/alien-three.png', 'images/alien-four.png', 'images/alien-five.png']
 
 // I need to create two class's. One for the player ship and one for the enemy ship.
 class PlayerShip {
-    constructor(health, damage) {
+    constructor(health, maxHealth, maxShield, damage) {
         this.health = health;
+        this.maxHealth = maxHealth;
         this.damage = damage;
+        this.maxShield = maxShield;
         this.shield = 100;
         this.energy = 0;
     };
@@ -64,7 +70,7 @@ class PlayerShip {
             playerAttackAnimation();
             removeDamageNumberEnemy();
             removeShieldNumberPlayer();
-            let currentDamage = randomValue(50);
+            let currentDamage = randomValue(superDamage);
             enemyDamageDis.innerHTML = `${currentDamage}`;
             enemyDamageDis.style.opacity = '0';
             enemyDamageDis.style.top = '0';
@@ -81,8 +87,9 @@ class PlayerShip {
 };
 
 class EnemyShip {
-    constructor(health, damage) {
+    constructor(health, maxHealth, damage) {
         this.health = health;
+        this.maxHealth = maxHealth;
         this.damage = damage;
     };
     attack(user) {
@@ -124,8 +131,8 @@ class EnemyShip {
 };
 
 let currentEnemy = 0;
-const player = new PlayerShip(100, 12);
-const enemyFleet = [new EnemyShip(250, 15), new EnemyShip(350, 25), new EnemyShip(450, 35), new EnemyShip(550, 45), new EnemyShip(700, 55)];
+const player = new PlayerShip(100, 100, 100, 12);
+let enemyFleet = [new EnemyShip(250, 250, 15), new EnemyShip(350, 350, 25), new EnemyShip(450, 450, 35), new EnemyShip(550, 550, 45), new EnemyShip(700, 700, 55)];
 let enemy = enemyFleet[currentEnemy];
 
 // Need a render function that will update the page with the stats of each class.
@@ -134,8 +141,8 @@ const render = () => {
     // Logic to make sure stats are right.
     if (player.shield < 0) {
         player.shield = 0;
-    } else if (player.shield > 100) {
-        player.shield = 100;
+    } else if (player.shield > player.maxShield) {
+        player.shield = player.maxShield;
     };
 
     if (player.health < 0) {
@@ -148,6 +155,8 @@ const render = () => {
         player.energy = 10;
     } else if (player.energy === 10) {
         document.getElementById('super').style.animation = 'pulse 2s infinite';
+    } else {
+        document.getElementById('super').style.animation = '';
     }
 
     // Updates stats on page.
@@ -156,7 +165,7 @@ const render = () => {
     document.getElementById('super').innerText = `Super: ${player.energy}`;
 
     // Enemy health bar.
-    enemyVitals.style.background = `linear-gradient(90deg, rgba(0,89,255,0.4) 0%, rgba(111,0,255,1) ${(enemy.health/250) * 100}%, rgba(0, 37, 104, 0.736) ${(enemy.health/250) * 100}%`;
+    enemyVitals.style.background = `linear-gradient(90deg, rgba(0,89,255,0.4) 0%, rgba(111,0,255,1) ${(enemy.health/enemy.maxHealth) * 100}%, rgba(0, 37, 104, 0.736) ${(enemy.health/enemy.maxHealth) * 100}%`;
 
     // Check whos turn it is to apply wiggle animation.
     if (!playerTurn) {
@@ -174,21 +183,47 @@ const render = () => {
     // Win conditions.
     if (player.health === 0) {
         endGame = true;
+        playerStatus = false;
         playerShipDiv.innerHTML = '<img src="images/explode.png">'
         openModel();
         modalBox.innerHTML = '<h1>You have lost!<h1><br><h6><em>Click anywhere to reset the game.</em></h6>';
+    } else if (enemy.health === 0 && currentEnemy === enemyFleet.length-1) {
+        playerTurn = true;
+        endGame = true;
+        playerStatus = false;
+        enemyShipDiv.innerHTML = '<img src="images/explode.png">'
+        openModel();
+        modalBox.innerHTML = `
+        <h1>You have won!</h1>
+        <br>
+        <h2>You have successfully destroyed the enemy fleet!</h2>
+        <h6><em>Click anywhere to reset the game.</em></h6>
+        `;
     } else if (enemy.health === 0) {
+        playerTurn = true;
         endGame = true;
         enemyShipDiv.innerHTML = '<img src="images/explode.png">'
         openModel();
-        modalBox.innerHTML = '<h1>You have won!</h1><br><h6><em>Click anywhere to reset the game.</em></h6>';
+        modalBox.innerHTML = `
+        <h1>You have won!</h1>
+        <br>
+        <h6><em>Try your luck against the next boss?</em><button id="continue">Continue</button></h6>
+        `;
+        document.getElementById('continue').addEventListener('click', (evt) => {
+            currentEnemy++;
+            enemy = enemyFleet[currentEnemy];
+            continueGame();
+        });
     };
 
     // Add event listener to modal, changes based on the endGame boolean.
     modalTemp.addEventListener('click', () => {
         if (!endGame) {
             modalTemp.style.display = 'none';
-        } else {
+        } else if (endGame && !playerStatus) {
+            currentEnemy = 0;
+            enemy = enemyFleet[currentEnemy];
+            currentAlienInd = 0;
             reset();
         }
     });
@@ -210,17 +245,37 @@ const enemyTurn = () => {
 // Reset the game.
 const reset = () => {
     player.health = 100;
+    player.maxHealth = 100;
     player.shield = 100;
+    player.maxHealth = 100;
     player.energy = 0;
-    enemy.health = 250;
+    enemyFleet = [new EnemyShip(250, 250, 15), new EnemyShip(350, 350, 25), new EnemyShip(450, 450, 35), new EnemyShip(550, 550, 45), new EnemyShip(700, 700, 55)];
     endGame = false;
     playerTurn = true;
     playerShipDiv.innerHTML = `<img class="player-ship" src="images/player-ship-one.png" alt="This is the player's ship.">`;
-    enemyShipDiv.innerHTML = `<img class="enemy-ship" src="images/alien-two.png" alt="This is the enemy's ship.">`;
+    enemyShipDiv.innerHTML = `<img class="enemy-ship" src="${alienImages[currentAlienInd]}" alt="This is the enemy's ship.">`;
     removeEnemyAttackAnimation();
     removePlayerAttackAnimation();
     render();
 };
+
+const continueGame = () => {
+    player.maxHealth = (player.maxHealth + (player.maxHealth * .20));
+    player.health = player.maxHealth;
+    player.maxShield = (player.maxShield + (player.maxShield * .20));
+    player.shield = player.maxShield;
+    player.damage += (player.damage + (player.damage * .10));
+    player.energy = 0;
+    superDamage += 20;
+    endGame = false;
+    playerTurn = true;
+    currentAlienInd++;
+    playerShipDiv.innerHTML = `<img class="player-ship" src="images/player-ship-one.png" alt="This is the player's ship.">`;
+    enemyShipDiv.innerHTML = `<img class="enemy-ship" src="${alienImages[currentAlienInd]}" alt="This is the enemy's ship.">`;
+    removeEnemyAttackAnimation();
+    removePlayerAttackAnimation();
+    render();
+}
 
 // Open model function.
 const openModel = () => {
